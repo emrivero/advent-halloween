@@ -14,18 +14,34 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
     const response = await fetch('movies.json')
-    const movies = (await response.json()).movies;
+    const data = await response.json()
+    const movies = data.movies;
+    const date = data.date
 
     const today = new Date().getDate();
     const month = new Date().getMonth() + 1;
 
-    const shuffleMovies = window.localStorage.getItem('movies') ? JSON.parse(window.localStorage.getItem('movies')) : shuffleArray(movies)
-    window.localStorage.setItem('movies', JSON.stringify(shuffleMovies))
+    const localDataString = window.localStorage.getItem('data')
+
+    let shuffleMovies = []
+    if (localDataString) {
+        const localData = JSON.parse(localDataString)
+        if (localData.date !== date) {
+            shuffleMovies = shuffleArray(movies)
+            window.localStorage.setItem('movies', JSON.stringify(shuffleMovies))
+        } else {
+            shuffleMovies = JSON.parse(window.localStorage.getItem('movies'))
+        }
+    } else {
+        window.localStorage.setItem('data', JSON.stringify(data))
+        shuffleMovies = shuffleArray(movies)
+        window.localStorage.setItem('movies', JSON.stringify(shuffleMovies))
+    }
 
     shuffleMovies.forEach((movie, index) => {
         const dayNumber = index + 1;
         const day = document.querySelector(`[data-day="${dayNumber}"]`);
-        if (index <= today && month === 10) {
+        if (dayNumber<=today && month === 10) {
             day.querySelector('.lock').style.display = 'none';
             day.classList.add('unlocked')
             day.addEventListener('click', () => {

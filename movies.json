@@ -1,4 +1,5 @@
 {
+    "date": "2024-09-30T22:44:57.931Z",
     "movies": [
         {
             "title": "Pesadillas antes de navidad",
@@ -21,36 +22,44 @@
             "img": "https://pics.filmaffinity.com/edward_scissorhands-367797250-mmed.jpg"
         },
         {
-            "title": "Bitelchus - Netflix",
-            "img": "https://th.bing.com/th/id/OIP.k4mupD8wYjuONq65iECnxgHaLH?rs=1&pid=ImgDetMain"
+            "title": "Bitelchus",
+            "img": "https://pics.filmaffinity.com/beetlejuice-194191930-mmed.jpg"
         },
         {
             "title": "La Familia Addams (saga)",
-            "img": "https://th.bing.com/th/id/OIP.k4mupD8wYjuONq65iECnxgHaLH?rs=1&pid=ImgDetMain"
+            "img": "https://pics.filmaffinity.com/the_addams_family-987196331-mmed.jpg"
         },
         {
             "title": "La Familia Addams (saga)",
-            "img": "https://th.bing.com/th/id/OIP.k4mupD8wYjuONq65iECnxgHaLH?rs=1&pid=ImgDetMain"
+            "img": "https://pics.filmaffinity.com/the_addams_family-987196331-mmed.jpg"
         },
         {
             "title": "La Familia Addams (dibujos saga)",
-            "img": "https://th.bing.com/th/id/OIP.k4mupD8wYjuONq65iECnxgHaLH?rs=1&pid=ImgDetMain"
+            "img": "https://pics.filmaffinity.com/the_addams_family-839137722-mmed.jpg"
         },
         {
             "title": "La Familia Addams (dibujos saga)",
-            "img": "https://th.bing.com/th/id/OIP.k4mupD8wYjuONq65iECnxgHaLH?rs=1&pid=ImgDetMain"
+            "img": "https://pics.filmaffinity.com/the_addams_family-839137722-mmed.jpg"
         },
         {
-            "title": "Casper",
-            "img": "https://th.bing.com/th/id/OIP.k4mupD8wYjuONq65iECnxgHaLH?rs=1&pid=ImgDetMain"
+            "title": "Casper (Parte ?)",
+            "img": "https://pics.filmaffinity.com/casper-187579637-mmed.jpg"
         },
         {
-            "title": "Cazafantasmas",
-            "img": "https://th.bing.com/th/id/OIP.k4mupD8wYjuONq65iECnxgHaLH?rs=1&pid=ImgDetMain"
+            "title": "Casper (Parte ?)",
+            "img": "https://pics.filmaffinity.com/casper-187579637-mmed.jpg"
+        },
+        {
+            "title": "Cazafantasmas (1984)",
+            "img": "https://pics.filmaffinity.com/ghostbusters_ghost_busters-295077476-mmed.jpg"
+        },
+        {
+            "title": "Cazafantasmas (2016)",
+            "img": "https://pics.filmaffinity.com/ghostbusters-720133297-mmed.jpg"
         },
         {
             "title": "La retorno de las brujas",
-            "img": "https://pics.filmaffinity.com/hocus_pocus-665291328-large.jpg"
+            "img": "https://pics.filmaffinity.com/hocus_pocus-665291328-mmed.jpg"
         },
         {
             "title": "Hotel Transilvania (saga)",
@@ -82,7 +91,7 @@
         },
         {
             "title": "Scooby Do",
-            "img": "https://th.bing.com/th/id/OIP.k4mupD8wYjuONq65iECnxgHaLH?rs=1&pid=ImgDetMain"
+            "img": "https://pics.filmaffinity.com/scooby_doo_scooby_doo-549234269-mmed.jpg"
         },
         {
             "title": "Gremlins",
@@ -103,6 +112,14 @@
         {
             "title": "Sleepy Hollow",
             "img": "https://pics.filmaffinity.com/sleepy_hollow-935433957-mmed.jpg"
+        },
+        {
+            "title": "Pesadillas (saga)",
+            "img": "https://pics.filmaffinity.com/goosebumps-595760728-mmed.jpg"
+        },
+        {
+            "title": "Pesadillas (saga)",
+            "img": "https://pics.filmaffinity.com/goosebumps-595760728-mmed.jpg"
         }
     ]
 }
