@@ -1,170 +1,180 @@
 "use client";
 
-import { addDays, eachDayOfInterval, format } from "date-fns";
+import {
+  eachDayOfInterval,
+  format,
+  getDay,
+  isSameDay,
+  isWeekend,
+} from "date-fns";
+import { es } from "date-fns/locale";
 import { useMemo, useState } from "react";
 import { createPlanAction } from "./actions";
 
-type Strategy = "daily" | "weekends" | "3_per_week" | "custom";
+const iso = (d: Date) => d.toISOString().slice(0, 10);
 
-function iso(d: Date) {
-  return d.toISOString().slice(0, 10);
-}
+// Convierte getDay() (0=Dom..6=Sáb) a índice L(0)..D(6)
+const mondayIndex = (d: Date) => (getDay(d) + 6) % 7;
 
 export default function PlanSetupClient() {
+  const year = new Date().getFullYear();
+  const start = new Date(year, 9, 1); // 1 oct
+  const end = new Date(year, 9, 30); // 30 oct
   const today = new Date();
-  const [name, setName] = useState("Mi plan 2025");
-  const [start, setStart] = useState(iso(today));
-  const [end, setEnd] = useState(iso(addDays(today, 29)));
-  const [count, setCount] = useState(13);
-  const [strategy, setStrategy] = useState<Strategy>("daily");
-  const [customDays, setCustomDays] = useState<string[]>([]); // YYYY-MM-DD
 
-  const rangeDays = useMemo(
-    () =>
-      eachDayOfInterval({ start: new Date(start), end: new Date(end) }).map(
-        iso
-      ),
-    [start, end]
+  const [name, setName] = useState(`Halloween ${year}`);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+
+  const days = eachDayOfInterval({ start, end });
+
+  // --- Padding para alinear a lunes ---
+  const leading = mondayIndex(start); // nº de celdas vacías antes del día 1
+  const grid: (Date | null)[] = useMemo(
+    () => Array.from({ length: leading }, () => null).concat(days),
+    [leading, days]
   );
+  // ------------------------------------
 
-  const toggleCustom = (d: string) => {
-    setCustomDays((prev) =>
-      prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d].sort()
-    );
+  const toggle = (d: Date) => {
+    const key = iso(d);
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
   };
 
+  const selectWeekends = () =>
+    setSelected(new Set(days.filter(isWeekend).map(iso)));
+  const selectWeekdays = () =>
+    setSelected(new Set(days.filter((d) => !isWeekend(d)).map(iso)));
+  const clearAll = () => setSelected(new Set());
+
+  const selectedSorted = Array.from(selected).sort();
+  const count = selectedSorted.length;
+  const startDate = count ? selectedSorted[0] : null;
+  const endDate = count ? selectedSorted[count - 1] : null;
+
   const submit = async () => {
+    if (!count) {
+      alert("Selecciona al menos un día.");
+      return;
+    }
     await createPlanAction({
       name,
-      startDate: start,
-      endDate: end,
+      startDate: startDate!,
+      endDate: endDate!,
       count,
-      strategy,
-      customDays: strategy === "custom" ? customDays : [],
+      strategy: "custom",
+      customDays: selectedSorted,
     });
   };
 
   return (
-    <div className="mt-6 space-y-4">
-      <div className="grid gap-4 md:grid-cols-2">
-        <label className="text-left">
-          <span className="text-sm text-white/80">Nombre</span>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-1 w-full rounded-md border border-white/10 bg-black/40 px-3 py-2 text-white"
-          />
-        </label>
-        <label className="text-left">
-          <span className="text-sm text-white/80">Número de películas</span>
-          <input
-            type="number"
-            min={1}
-            max={100}
-            value={count}
-            onChange={(e) => setCount(Number(e.target.value))}
-            className="mt-1 w-full rounded-md border border-white/10 bg-black/40 px-3 py-2 text-white"
-          />
-        </label>
-        <label className="text-left">
-          <span className="text-sm text-white/80">Inicio</span>
-          <input
-            type="date"
-            value={start}
-            onChange={(e) => setStart(e.target.value)}
-            className="mt-1 w-full rounded-md border border-white/10 bg-black/40 px-3 py-2 text-white"
-          />
-        </label>
-        <label className="text-left">
-          <span className="text-sm text-white/80">Fin</span>
-          <input
-            type="date"
-            value={end}
-            onChange={(e) => setEnd(e.target.value)}
-            className="mt-1 w-full rounded-md border border-white/10 bg-black/40 px-3 py-2 text-white"
-          />
-        </label>
+    <div className="mt-6 space-y-5">
+      <h2 className="text-xl font-semibold text-halloweenAccent">
+        Elige tus días de octubre
+      </h2>
+
+      <label className="block text-left">
+        <span className="text-sm text-white/80">Nombre del plan</span>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="mt-1 w-full rounded-md border border-white/10 bg-black/40 px-3 py-2 text-white"
+        />
+      </label>
+
+      <div className="flex flex-wrap gap-2">
+        <button
+          onClick={selectWeekends}
+          className="rounded-md border border-white/15 px-3 py-1.5 text-sm hover:bg-white/5"
+        >
+          Fines de semana
+        </button>
+        <button
+          onClick={selectWeekdays}
+          className="rounded-md border border-white/15 px-3 py-1.5 text-sm hover:bg-white/5"
+        >
+          Laborables
+        </button>
+        <button
+          onClick={clearAll}
+          className="rounded-md border border-white/15 px-3 py-1.5 text-sm hover:bg-white/5"
+        >
+          Limpiar
+        </button>
       </div>
 
-      <div className="text-left">
-        <span className="text-sm text-white/80">Estrategia</span>
-        <div className="mt-2 grid gap-2 sm:grid-cols-4">
-          {(["daily", "weekends", "3_per_week", "custom"] as Strategy[]).map(
-            (s) => (
-              <button
-                key={s}
-                onClick={() => setStrategy(s)}
-                className={[
-                  "rounded-md border px-3 py-2 text-sm",
-                  strategy === s
-                    ? "bg-white text-gray-900"
-                    : "border-white/15 hover:bg-white/5",
-                ].join(" ")}
-              >
-                {s === "daily"
-                  ? "Diario"
-                  : s === "weekends"
-                  ? "Fines de semana"
-                  : s === "3_per_week"
-                  ? "3/semana"
-                  : "Custom"}
-              </button>
-            )
+      {/* Cabecera L-D */}
+      <div className="grid grid-cols-7 text-center text-white/60 text-xs">
+        {["L", "M", "X", "J", "V", "S", "D"].map((d) => (
+          <div key={d} className="py-1">
+            {d}
+          </div>
+        ))}
+      </div>
+
+      {/* Grid con padding inicial */}
+      <div className="grid grid-cols-7 gap-2">
+        {grid.map((d, i) => {
+          if (!d) {
+            return (
+              <div
+                key={`pad-${i}`}
+                className="h-[70px] rounded-[16px] border border-transparent"
+              />
+            );
+          }
+          const key = iso(d);
+          const isSel = selected.has(key);
+          const isToday = isSameDay(d, today);
+          return (
+            <button
+              key={key}
+              onClick={() => toggle(d)}
+              className={[
+                "relative h:[70px] h-[70px] rounded-[16px] border text-sm transition",
+                isSel
+                  ? "bg-white text-gray-900"
+                  : "border-white/15 hover:bg-white/5 text-white/80",
+                isToday && !isSel ? "ring-1 ring-[#f0a500]/70" : "",
+              ].join(" ")}
+              title={format(d, "PPPP", { locale: es })}
+            >
+              <div className="absolute left-2 top-2 text-xs opacity-70">
+                {format(d, "d", { locale: es })}
+              </div>
+              {isSel && (
+                <span className="absolute right-2 top-2 inline-block h-2.5 w-2.5 rounded-full bg-[#10b981]" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/30 p-3">
+        <div className="text-sm text-white/80">
+          Seleccionados: <strong>{count}</strong>
+          {startDate && endDate && (
+            <>
+              {" "}
+              · Rango: <span className="opacity-90">{startDate}</span> →{" "}
+              <span className="opacity-90">{endDate}</span>
+            </>
           )}
         </div>
-      </div>
-
-      {/* Calendario custom simple */}
-      {strategy === "custom" && (
-        <div className="mt-4">
-          <p className="text-left text-white/80 text-sm mb-2">
-            Selecciona días concretos dentro del rango:
-          </p>
-          <div
-            className="
-            grid gap-2
-            [grid-template-columns:repeat(7,minmax(0,1fr))]
-            max-[768px]:[grid-template-columns:repeat(5,minmax(0,1fr))]
-            max-[560px]:[grid-template-columns:repeat(3,minmax(0,1fr))]
-          "
-          >
-            {rangeDays.map((d) => {
-              const selected = customDays.includes(d);
-              const dayNum = new Date(d).getDate();
-              return (
-                <button
-                  key={d}
-                  onClick={() => toggleCustom(d)}
-                  className={[
-                    "relative h-[80px] rounded-[16px] border",
-                    selected
-                      ? "bg-white text-gray-900"
-                      : "border-white/15 hover:bg-white/5",
-                  ].join(" ")}
-                  title={d}
-                >
-                  <div className="absolute top-2 left-2 text-xs opacity-70">
-                    {format(new Date(d), "LLL d")}
-                  </div>
-                  <div className="h-full flex items-center justify-center text-2xl">
-                    {dayNum}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-          <p className="mt-2 text-sm text-white/60 text-left">
-            Seleccionados: {customDays.length}
-          </p>
-        </div>
-      )}
-
-      <div className="pt-2">
         <button
           onClick={submit}
-          className="rounded-md bg-white px-4 py-2 text-gray-900"
+          disabled={!count}
+          className={
+            count
+              ? "rounded-md bg-white px-4 py-2 text-gray-900"
+              : "rounded-md border border-white/15 px-4 py-2 text-white/60 cursor-not-allowed"
+          }
         >
-          Generar plan
+          Generar plan ({count} peli{count === 1 ? "" : "s"})
         </button>
       </div>
     </div>

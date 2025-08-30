@@ -1,4 +1,4 @@
-import AuthButton from "@/components/AuthButton";
+import AuthButtonClient from "@/components/AuthButtonClient";
 import Link from "next/link";
 import "./globals.css";
 
@@ -26,7 +26,7 @@ export default function RootLayout({
             <Link href="/" className="text-lg font-semibold">
               🎃 Advent Halloween
             </Link>
-            <AuthButton />
+            <AuthButtonClient />
           </nav>
         </header>
         <main className="mx-auto max-w-5xl p-4">{children}</main>
