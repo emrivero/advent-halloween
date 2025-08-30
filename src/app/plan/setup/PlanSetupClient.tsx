@@ -41,7 +41,7 @@ export default function PlanSetupClient() {
   };
 
   const selectWeekends = () =>
-    setSelected(new Set(daysArr.filter(isWeekend).map(iso)));
+    setSelected(new Set(daysArr.filter((d) => isWeekend(d)).map(iso)));
   const selectWeekdays = () =>
     setSelected(new Set(daysArr.filter((d) => !isWeekend(d)).map(iso)));
   const clearAll = () => setSelected(new Set());
