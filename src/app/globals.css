@@ -29,6 +29,66 @@
   --font-werebeast: 'Were-Beast', sans-serif;
 }
 
+/* src/app/globals.css */
+
+/* ...tus @tailwind base|components|utilities y @font-face... */
+
+/* Tokens v4 opcionales si los usas */
+@theme {
+  --color-halloweenAccent: #f0a500;
+  --font-werebeast: 'Were-Beast', sans-serif;
+}
+
+/* Animaciones */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0)
+  }
+
+  50% {
+    transform: translateY(-18px)
+  }
+}
+
+@keyframes bob {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg)
+  }
+
+  50% {
+    transform: translateY(14px) rotate(10deg)
+  }
+}
+
+@keyframes drift {
+
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg)
+  }
+
+  50% {
+    transform: translateX(6px) rotate(-20deg)
+  }
+}
+
+/* Utilities (Tailwind v4 permite añadir clases así) */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-bob {
+  animation: bob 5s ease-in-out infinite;
+}
+
+.animate-drift {
+  animation: drift 7s ease-in-out infinite;
+}
+
 /* Body: mismo look */
 html,
 body {
@@ -40,7 +100,7 @@ body {
   /* en JSX usarás text-white, etc. */
   color: #fff;
   text-align: center;
-  background-image: url('/img/spiderweb.png');
+  /* background-image: url('/img/spiderweb.png'); */
   background-repeat: no-repeat;
   background-size: contain;
   /* font-family: 'Were-Beast', sans-serif; */

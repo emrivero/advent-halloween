@@ -1,6 +1,7 @@
 "use client";
 
 import MovieSearch from "@/components/MoviesSearch";
+import { Movie, useMovieData } from "@/hooks/useMovieData";
 import { useMemo, useState } from "react";
 import { createPlanFromSelectionAction } from "./actions";
 
@@ -50,7 +51,7 @@ const SLASHER = [
   {
     id: "sl-texas",
     title: "La matanza de Texas",
-    poster_url: null,
+    poster_url: "/6GVnIHoUDsqf1ICQR9ovRReuNke.jpg",
     tags: ["Slasher"],
   },
   {
@@ -60,14 +61,6 @@ const SLASHER = [
     tags: ["Slasher"],
   },
 ];
-
-type Movie = {
-  id?: string;
-  title: string;
-  poster_url?: string | null;
-  tags?: string[];
-  isCustom?: boolean;
-};
 
 export default function ChooseMoviesClient({
   name,
@@ -82,13 +75,17 @@ export default function ChooseMoviesClient({
     "Spooky" | "Sobrenatural" | "Slasher" | "Buscar"
   >("Spooky");
 
+  const spooky = useMovieData("movies_spooky_cache");
+  const slasher = useMovieData("movies_slasher_cache");
+  const supernatural = useMovieData("movies_supernatural_cache");
+
   const pools: Record<string, Movie[]> = useMemo(
     () => ({
-      Spooky: SPOOKY,
-      Sobrenatural: SOBRENATURAL,
-      Slasher: SLASHER,
+      Spooky: spooky.movies,
+      Sobrenatural: supernatural.movies,
+      Slasher: slasher.movies,
     }),
-    []
+    [spooky.movies, slasher.movies, supernatural.movies]
   );
 
   const remaining = target - selected.length;
@@ -108,21 +105,6 @@ export default function ChooseMoviesClient({
   const removeAt = (idx: number) =>
     setSelected((prev) => prev.filter((_, i) => i !== idx));
 
-  // Buscador custom
-  const [q, setQ] = useState("");
-  const [poster, setPoster] = useState("");
-  const addCustom = () => {
-    const title = q.trim();
-    if (!title) return;
-    if (selected.length >= target) return;
-    setSelected((prev) => [
-      ...prev,
-      { title, poster_url: poster || null, isCustom: true },
-    ]);
-    setQ("");
-    setPoster("");
-  };
-
   const submit = async () => {
     if (selected.length !== target)
       return alert(
@@ -137,7 +119,7 @@ export default function ChooseMoviesClient({
 
   return (
     <div className="py-6">
-      <h1 className="text-2xl font-semibold">
+      <h1 className="text-2xl font-semibold text-halloweenAccent">
         Elige {target} película{target === 1 ? "" : "s"}
       </h1>
       <p className="text-white/70">
@@ -158,6 +140,77 @@ export default function ChooseMoviesClient({
             {t}
           </button>
         ))}
+      </div>
+
+      {/* Seleccionadas (orden final) */}
+      <div className="mt-6 rounded-xl border border-white/10 bg-black/30 p-3">
+        <div className="mb-2 flex items-center justify-between">
+          <div className="text-sm text-white/80">
+            Seleccionadas:{" "}
+            <strong>
+              {selected.length}/{target}
+            </strong>{" "}
+          </div>
+        </div>
+        {selected.length ? (
+          <ol className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {selected.map((m, i) => (
+              <li
+                key={`${m.id ?? "custom"}-${i}`}
+                className="flex items-center gap-2 rounded-md border border-white/10 bg-black/40 p-2"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={m.poster_url ?? "/img/pumpkin.png"}
+                  alt={m.title}
+                  className="h-12 w-8 rounded object-cover"
+                />
+                <div className="flex-1">
+                  <div className="text-sm font-medium leading-tight">
+                    {i + 1}. {m.title}
+                  </div>
+                  {!!m.tags?.length && (
+                    <div className="text-xs text-white/60">
+                      {m.tags.join(" · ")}
+                    </div>
+                  )}
+                  {m.year && (
+                    <div className="text-xs text-white/60">{m.year}</div>
+                  )}
+                  {m.isCustom && (
+                    <div className="text-xs text-[#10b981]">Custom</div>
+                  )}
+                </div>
+                <button
+                  onClick={() => removeAt(i)}
+                  className="rounded-md border border-white/15 px-2 py-1 text-xs hover:bg-white/5"
+                >
+                  Quitar
+                </button>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p className="text-sm text-white/60">Aún no has añadido películas.</p>
+        )}
+      </div>
+
+      {/* CTA final */}
+      <div className="mt-4 flex items-center justify-end gap-3">
+        <div className="text-sm text-white/70">
+          Restantes: <strong>{remaining}</strong>
+        </div>
+        <button
+          onClick={submit}
+          disabled={selected.length !== target}
+          className={
+            selected.length === target
+              ? "rounded-md bg-white px-4 py-2 text-gray-900"
+              : "rounded-md border border-white/15 px-4 py-2 text-white/60 cursor-not-allowed"
+          }
+        >
+          Crear plan
+        </button>
       </div>
 
       {/* Grid de la pestaña */}
@@ -198,6 +251,7 @@ export default function ChooseMoviesClient({
                 <div className="text-xs text-white/60">
                   {m.tags?.join(" · ")}
                 </div>
+                <div className="text-xs text-white/60">{m.year}</div>
                 {picked && (
                   <span className="absolute right-2 top-2 rounded-full bg-[#22c55e] px-2 py-0.5 text-xs">
                     Añadida
@@ -220,82 +274,14 @@ export default function ChooseMoviesClient({
                   title: movie.title,
                   poster_url: movie.poster_url ?? null,
                   tags: movie.genres ?? [],
-                  isCustom: true, // marcamos que vino por buscador
+                  isCustom: false, // marcamos que vino por buscador
+                  year: movie.year, // año para mostrar
                 },
               ]);
             }}
           />
         </div>
       )}
-
-      {/* Seleccionadas (orden final) */}
-      <div className="mt-6 rounded-xl border border-white/10 bg-black/30 p-3">
-        <div className="mb-2 flex items-center justify-between">
-          <div className="text-sm text-white/80">
-            Seleccionadas:{" "}
-            <strong>
-              {selected.length}/{target}
-            </strong>{" "}
-            · Arriba para añadir/alternar
-          </div>
-        </div>
-        {selected.length ? (
-          <ol className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {selected.map((m, i) => (
-              <li
-                key={`${m.id ?? "custom"}-${i}`}
-                className="flex items-center gap-2 rounded-md border border-white/10 bg-black/40 p-2"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={m.poster_url ?? "/img/pumpkin.png"}
-                  alt={m.title}
-                  className="h-12 w-8 rounded object-cover"
-                />
-                <div className="flex-1">
-                  <div className="text-sm font-medium leading-tight">
-                    {i + 1}. {m.title}
-                  </div>
-                  {!!m.tags?.length && (
-                    <div className="text-xs text-white/60">
-                      {m.tags.join(" · ")}
-                    </div>
-                  )}
-                  {m.isCustom && (
-                    <div className="text-xs text-[#10b981]">Custom</div>
-                  )}
-                </div>
-                <button
-                  onClick={() => removeAt(i)}
-                  className="rounded-md border border-white/15 px-2 py-1 text-xs hover:bg-white/5"
-                >
-                  Quitar
-                </button>
-              </li>
-            ))}
-          </ol>
-        ) : (
-          <p className="text-sm text-white/60">Aún no has añadido películas.</p>
-        )}
-      </div>
-
-      {/* CTA final */}
-      <div className="mt-4 flex items-center justify-end gap-3">
-        <div className="text-sm text-white/70">
-          Restantes: <strong>{remaining}</strong>
-        </div>
-        <button
-          onClick={submit}
-          disabled={selected.length !== target}
-          className={
-            selected.length === target
-              ? "rounded-md bg-white px-4 py-2 text-gray-900"
-              : "rounded-md border border-white/15 px-4 py-2 text-white/60 cursor-not-allowed"
-          }
-        >
-          Crear plan
-        </button>
-      </div>
     </div>
   );
 }

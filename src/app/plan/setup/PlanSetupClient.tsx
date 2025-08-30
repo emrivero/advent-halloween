@@ -66,14 +66,14 @@ export default function PlanSetupClient() {
         Elige tus días de octubre
       </h2>
 
-      <label className="block text-left">
+      {/* <label className="block text-left">
         <span className="text-sm text-white/80">Nombre del plan</span>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="mt-1 w-full rounded-md border border-white/10 bg-black/40 px-3 py-2 text-white"
         />
-      </label>
+      </label> */}
 
       <div className="flex flex-wrap gap-2">
         <button

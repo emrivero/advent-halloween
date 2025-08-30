@@ -14,9 +14,7 @@ export default async function PlanSetupPage() {
       <h1 className="text-3xl font-bold text-[#f0a500]">
         Halloween a tu gusto
       </h1>
-      <p className="text-white/70 mt-1">
-        Elige qué dias quieres ver tus películas favoritas.
-      </p>
+
       <PlanSetupClient />
     </div>
   );

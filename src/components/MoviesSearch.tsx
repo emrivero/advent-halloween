@@ -29,7 +29,7 @@ export default function MovieSearch({
   const canAdd = !!detail && maxRemaining > 0;
 
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef} className="relative z-index-[100]">
       {/* Input */}
       <div className="flex gap-2">
         <input

@@ -50,6 +50,162 @@ export type Database = {
         }
         Relationships: []
       }
+      movies_cache: {
+        Row: {
+          genres_es: string[] | null
+          imdb_id: string | null
+          overview_es: string | null
+          poster_path: string | null
+          raw: Json | null
+          release_date: string | null
+          runtime_min: number | null
+          title_es: string
+          tmdb_id: number
+          updated_at: string
+        }
+        Insert: {
+          genres_es?: string[] | null
+          imdb_id?: string | null
+          overview_es?: string | null
+          poster_path?: string | null
+          raw?: Json | null
+          release_date?: string | null
+          runtime_min?: number | null
+          title_es: string
+          tmdb_id: number
+          updated_at?: string
+        }
+        Update: {
+          genres_es?: string[] | null
+          imdb_id?: string | null
+          overview_es?: string | null
+          poster_path?: string | null
+          raw?: Json | null
+          release_date?: string | null
+          runtime_min?: number | null
+          title_es?: string
+          tmdb_id?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      movies_slasher_cache: {
+        Row: {
+          genres_es: string[] | null
+          imdb_id: string | null
+          overview_es: string | null
+          poster_path: string | null
+          raw: Json | null
+          release_date: string | null
+          runtime_min: number | null
+          title_es: string
+          tmdb_id: number
+          updated_at: string
+        }
+        Insert: {
+          genres_es?: string[] | null
+          imdb_id?: string | null
+          overview_es?: string | null
+          poster_path?: string | null
+          raw?: Json | null
+          release_date?: string | null
+          runtime_min?: number | null
+          title_es: string
+          tmdb_id: number
+          updated_at?: string
+        }
+        Update: {
+          genres_es?: string[] | null
+          imdb_id?: string | null
+          overview_es?: string | null
+          poster_path?: string | null
+          raw?: Json | null
+          release_date?: string | null
+          runtime_min?: number | null
+          title_es?: string
+          tmdb_id?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      movies_spooky_cache: {
+        Row: {
+          genres_es: string[] | null
+          imdb_id: string | null
+          overview_es: string | null
+          poster_path: string | null
+          raw: Json | null
+          release_date: string | null
+          runtime_min: number | null
+          title_es: string
+          tmdb_id: number
+          updated_at: string
+        }
+        Insert: {
+          genres_es?: string[] | null
+          imdb_id?: string | null
+          overview_es?: string | null
+          poster_path?: string | null
+          raw?: Json | null
+          release_date?: string | null
+          runtime_min?: number | null
+          title_es: string
+          tmdb_id: number
+          updated_at?: string
+        }
+        Update: {
+          genres_es?: string[] | null
+          imdb_id?: string | null
+          overview_es?: string | null
+          poster_path?: string | null
+          raw?: Json | null
+          release_date?: string | null
+          runtime_min?: number | null
+          title_es?: string
+          tmdb_id?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      movies_supernatural_cache: {
+        Row: {
+          genres_es: string[] | null
+          imdb_id: string | null
+          overview_es: string | null
+          poster_path: string | null
+          raw: Json | null
+          release_date: string | null
+          runtime_min: number | null
+          title_es: string
+          tmdb_id: number
+          updated_at: string
+        }
+        Insert: {
+          genres_es?: string[] | null
+          imdb_id?: string | null
+          overview_es?: string | null
+          poster_path?: string | null
+          raw?: Json | null
+          release_date?: string | null
+          runtime_min?: number | null
+          title_es: string
+          tmdb_id: number
+          updated_at?: string
+        }
+        Update: {
+          genres_es?: string[] | null
+          imdb_id?: string | null
+          overview_es?: string | null
+          poster_path?: string | null
+          raw?: Json | null
+          release_date?: string | null
+          runtime_min?: number | null
+          title_es?: string
+          tmdb_id?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       plan_days: {
         Row: {
           day_date: string
@@ -143,6 +299,24 @@ export type Database = {
           display_name?: string | null
           tz?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      search_cache: {
+        Row: {
+          q_normalized: string
+          results: Json
+          updated_at: string
+        }
+        Insert: {
+          q_normalized: string
+          results: Json
+          updated_at?: string
+        }
+        Update: {
+          q_normalized?: string
+          results?: Json
+          updated_at?: string
         }
         Relationships: []
       }
