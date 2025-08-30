@@ -12,26 +12,50 @@
   font-display: swap;
 }
 
+@theme {
+  /* Colores */
+  --color-halloweenLocked: #835c08;
+  --color-halloweenUnlocked: #ff5153;
+  --color-halloweenAccent: #f0a500;
+
+  /* Radio */
+  --radius-pumpkin: 30%;
+
+  /* Background images */
+  --background-image-pumpkin: url('/img/pumpkin.png');
+  --background-image-spiderweb: url('/img/spiderweb.png');
+
+  /* Fuentes */
+  --font-werebeast: 'Were-Beast', sans-serif;
+}
+
 /* Body: mismo look */
-html, body { height: 100%; }
+html,
 body {
-  background-color: #1d1d1d;      /* en JSX usarás text-white, etc. */
+  height: 100%;
+}
+
+body {
+  background-color: #1d1d1d;
+  /* en JSX usarás text-white, etc. */
   color: #fff;
   text-align: center;
   background-image: url('/img/spiderweb.png');
   background-repeat: no-repeat;
   background-size: contain;
-  font-family: 'Were-Beast', sans-serif;
+  /* font-family: 'Were-Beast', sans-serif; */
 }
 
 /* Candado */
 .lock {
   width: 48px;
   height: 42px;
-  border: 3px solid #835c08; /* halloweenLocked */
+  border: 3px solid #835c08;
+  /* halloweenLocked */
   border-radius: 5px;
   position: relative;
 }
+
 .lock:after {
   content: "";
   display: block;
@@ -44,6 +68,7 @@ body {
   margin: -3.5px 0 0 -2px;
   transition: all 0.1s ease-in-out;
 }
+
 .lock:before {
   content: "";
   display: block;
@@ -62,13 +87,21 @@ body {
 
 /* Modal básico */
 .modal-backdrop {
-  position: fixed; inset: 0; background: rgba(0,0,0,.8); z-index: 50;
-  display: flex; align-items: flex-start; justify-content: center; padding-top: 6rem;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .8);
+  z-index: 50;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 6rem;
 }
+
 .modal-panel {
   width: min(600px, 90%);
   background: #333;
-  border: 1px solid #f0a500; /* en JSX puedes usar border-[#f0a500] */
+  border: 1px solid #f0a500;
+  /* en JSX puedes usar border-[#f0a500] */
   padding: 20px;
   color: white;
 }

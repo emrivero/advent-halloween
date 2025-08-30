@@ -25,7 +25,11 @@ function isUnlocked(day: number, monthIndex: number, now: Date) {
 export default function HalloweenCalendarPage() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [dataDate, setDataDate] = useState<string | null>(null);
-  const [modal, setModal] = useState<{ open: boolean; movie?: Movie; day?: number }>({ open: false });
+  const [modal, setModal] = useState<{
+    open: boolean;
+    movie?: Movie;
+    day?: number;
+  }>({ open: false });
 
   // Carga movies.json desde /public (en Next se sirve estático)
   useEffect(() => {
@@ -76,7 +80,11 @@ export default function HalloweenCalendarPage() {
         <h1 className="relative mx-auto inline-block text-4xl md:text-5xl font-bold text-halloweenAccent">
           Calendario de Halloween
         </h1>
-        {dataDate && <p className="mt-2 text-white/70 text-sm">Catálogo versión: {dataDate}</p>}
+        {dataDate && (
+          <p className="mt-2 text-white/70 text-sm">
+            Catálogo versión: {dataDate}
+          </p>
+        )}
       </header>
 
       <section
@@ -108,9 +116,11 @@ export default function HalloweenCalendarPage() {
               }}
             >
               {!unlocked && <span className="lock" aria-hidden="true" />}
-              <div className="
+              <div
+                className="
                 absolute -bottom-14 flex h-[45px] w-[45px] items-center justify-center rounded-full border-2 border-halloweenAccent bg-black/70 text-white text-sm md:h-[50px] md:w-[50px] md:text-base lg:h-[54px] lg:w-[54px]
-              ">
+              "
+              >
                 Día {day}
               </div>
             </button>
@@ -120,11 +130,15 @@ export default function HalloweenCalendarPage() {
 
       {/* Modal */}
       {modal.open && modal.movie && (
-        <div className="modal-backdrop" onClick={() => setModal({ open: false })}>
+        <div
+          className="modal-backdrop"
+          onClick={() => setModal({ open: false })}
+        >
           <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start justify-between">
               <h2 className="text-xl font-semibold">
-                Película recomendada para el día {modal.day}: {modal.movie.title}
+                Película recomendada para el día {modal.day}:{" "}
+                {modal.movie.title}
               </h2>
               <button
                 onClick={() => setModal({ open: false })}
