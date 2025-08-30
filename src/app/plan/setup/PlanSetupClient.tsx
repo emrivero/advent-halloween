@@ -8,47 +8,42 @@ import {
   isWeekend,
 } from "date-fns";
 import { es } from "date-fns/locale";
-import { useMemo, useState } from "react";
-import { createPlanAction } from "./actions";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const iso = (d: Date) => d.toISOString().slice(0, 10);
-
-// Convierte getDay() (0=Dom..6=Sáb) a índice L(0)..D(6)
 const mondayIndex = (d: Date) => (getDay(d) + 6) % 7;
 
 export default function PlanSetupClient() {
+  const router = useRouter();
   const year = new Date().getFullYear();
-  const start = new Date(year, 9, 1); // 1 oct
-  const end = new Date(year, 9, 30); // 30 oct
+  const start = new Date(year, 9, 1);
+  const end = new Date(year, 9, 30);
   const today = new Date();
 
   const [name, setName] = useState(`Halloween ${year}`);
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
-  const days = eachDayOfInterval({ start, end });
-
-  // --- Padding para alinear a lunes ---
-  const leading = mondayIndex(start); // nº de celdas vacías antes del día 1
-  const grid: (Date | null)[] = useMemo(
-    () => Array.from({ length: leading }, () => null).concat(days),
-    [leading, days]
-  );
-  // ------------------------------------
+  const daysArr = eachDayOfInterval({ start, end });
+  const leading = mondayIndex(start);
+  const grid: (Date | null)[] = Array.from(
+    { length: leading },
+    () => null
+  ).concat(daysArr);
 
   const toggle = (d: Date) => {
     const key = iso(d);
     setSelected((prev) => {
       const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
+      next.has(key) ? next.delete(key) : next.add(key);
       return next;
     });
   };
 
   const selectWeekends = () =>
-    setSelected(new Set(days.filter(isWeekend).map(iso)));
+    setSelected(new Set(daysArr.filter(isWeekend).map(iso)));
   const selectWeekdays = () =>
-    setSelected(new Set(days.filter((d) => !isWeekend(d)).map(iso)));
+    setSelected(new Set(daysArr.filter((d) => !isWeekend(d)).map(iso)));
   const clearAll = () => setSelected(new Set());
 
   const selectedSorted = Array.from(selected).sort();
@@ -56,19 +51,13 @@ export default function PlanSetupClient() {
   const startDate = count ? selectedSorted[0] : null;
   const endDate = count ? selectedSorted[count - 1] : null;
 
-  const submit = async () => {
-    if (!count) {
-      alert("Selecciona al menos un día.");
-      return;
-    }
-    await createPlanAction({
+  const goChoose = () => {
+    if (!count) return alert("Selecciona al menos un día.");
+    const params = new URLSearchParams({
       name,
-      startDate: startDate!,
-      endDate: endDate!,
-      count,
-      strategy: "custom",
-      customDays: selectedSorted,
+      days: selectedSorted.join(","),
     });
+    router.push(`/plan/setup/choose?${params.toString()}`);
   };
 
   return (
@@ -107,7 +96,6 @@ export default function PlanSetupClient() {
         </button>
       </div>
 
-      {/* Cabecera L-D */}
       <div className="grid grid-cols-7 text-center text-white/60 text-xs">
         {["L", "M", "X", "J", "V", "S", "D"].map((d) => (
           <div key={d} className="py-1">
@@ -116,17 +104,15 @@ export default function PlanSetupClient() {
         ))}
       </div>
 
-      {/* Grid con padding inicial */}
       <div className="grid grid-cols-7 gap-2">
         {grid.map((d, i) => {
-          if (!d) {
+          if (!d)
             return (
               <div
                 key={`pad-${i}`}
                 className="h-[70px] rounded-[16px] border border-transparent"
               />
             );
-          }
           const key = iso(d);
           const isSel = selected.has(key);
           const isToday = isSameDay(d, today);
@@ -135,7 +121,7 @@ export default function PlanSetupClient() {
               key={key}
               onClick={() => toggle(d)}
               className={[
-                "relative h:[70px] h-[70px] rounded-[16px] border text-sm transition",
+                "relative h-[70px] rounded-[16px] border text-sm transition",
                 isSel
                   ? "bg-white text-gray-900"
                   : "border-white/15 hover:bg-white/5 text-white/80",
@@ -166,7 +152,7 @@ export default function PlanSetupClient() {
           )}
         </div>
         <button
-          onClick={submit}
+          onClick={goChoose}
           disabled={!count}
           className={
             count
@@ -174,7 +160,7 @@ export default function PlanSetupClient() {
               : "rounded-md border border-white/15 px-4 py-2 text-white/60 cursor-not-allowed"
           }
         >
-          Generar plan ({count} peli{count === 1 ? "" : "s"})
+          Continuar
         </button>
       </div>
     </div>
