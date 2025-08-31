@@ -3,13 +3,12 @@
 /* Plugin opcional */
 @plugin "@tailwindcss/forms";
 
-/* Fuente Were-Beast */
 @font-face {
-  font-family: 'Were-Beast';
-  src: url('/fonts/Were-Beast.woff2') format('woff2');
+  font-family: 'Halloween';
+  src: url('/fonts/Halloween.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: swa
 }
 
 @theme {
@@ -103,7 +102,12 @@ body {
   /* background-image: url('/img/spiderweb.png'); */
   background-repeat: no-repeat;
   background-size: contain;
-  /* font-family: 'Were-Beast', sans-serif; */
+}
+
+h1,
+h2,
+h3 {
+  font-family: 'Happy Halloween', sans-serif;
 }
 
 /* Candado */

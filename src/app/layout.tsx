@@ -7,7 +7,7 @@ import AuthButtonClient from "@/components/AuthButtonClient";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Advent Halloween",
+  title: "Advent Films Halloween",
   description: "Tu maratón de Halloween a tu ritmo",
 };
 
@@ -18,6 +18,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
+      <head>
+        <link
+          href="https://fonts.cdnfonts.com/css/happy-halloween"
+          rel="stylesheet"
+        />
+      </head>
       <body className="min-h-dvh bg-[#1d1d1d] text-white">
         {/* Fondo y decoraciones */}
         <DecorativeBG />
@@ -26,7 +32,7 @@ export default function RootLayout({
         <header className="border-b border-white/10">
           <nav className="mx-auto flex max-w-5xl items-center justify-between p-4">
             <Link href="/" className="text-lg font-semibold">
-              🎃 Advent Halloween
+              🎃 Advent Films Halloween
             </Link>
             <AuthButtonClient />
           </nav>

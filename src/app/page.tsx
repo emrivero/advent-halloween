@@ -10,9 +10,11 @@ export default function HomePage() {
           Tu maratón de Halloween, a tu ritmo
         </h1>
         <p className="mx-auto max-w-2xl text-white/80">
-          Elige cuántas pelis quieres ver y en qué días. Desbloquea cada jornada
-          y marca tu progreso. Empieza en modo demo o crea tu plan personalizado
-          con cuenta.
+          Elige cuántas pelis quieres ver y en qué días.
+        </p>
+        <p className="mx-auto max-w-2xl text-white/80">
+          Desbloquea cada jornada y marca tu progreso. Empieza en modo demo o
+          crea tu plan personalizado con cuenta.
         </p>
       </section>
 
@@ -71,7 +73,7 @@ export default function HomePage() {
 
           <ul className="mt-5 space-y-2 text-left text-white/80">
             <li>• Sin registro, sin fricción</li>
-            <li>• Basado en tu dispositivo (localStorage)</li>
+            <li>• Basado en tu dispositivo</li>
             <li>
               • Estilo “Advent Halloween” original (Una película aleatoria
               diaria)
