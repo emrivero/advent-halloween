@@ -13,7 +13,19 @@ type SelectedMovie = {
   poster_url?: string | null;
   tags?: string[] | null;
   isCustom?: boolean;
+  sagaKey?: string;
+  sagaOrder?: number;
+  isSaga?: boolean;
 };
+
+// Fisher–Yates
+function shuffleInPlace<T>(a: T[]) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 function isUuid(v: string | undefined): v is string {
   return (
@@ -181,13 +193,93 @@ export async function createPlanFromSelectionAction(input: {
   if (planErr || !plan)
     throw new Error(planErr?.message ?? "Error creando plan");
 
-  console.log(days);
+  // 7) Interleave: sagas en orden interno, distribuidas entre el resto
 
-  // 7) Inserta plan_days mapeando por índice (1 a 1)
+  type Resolved = {
+    resolvedId: string;
+    title: string;
+    isSaga?: boolean;
+    sagaKey?: string;
+    sagaOrder?: number;
+  };
+
+  // movies[] y movieIds[] están alineados por índice i
+  const resolved: Resolved[] = movies.map((m, i) => ({
+    resolvedId: movieIds[i],
+    title: m.title,
+    isSaga: !!m.isSaga,
+    sagaKey: m.sagaKey?.trim() || undefined,
+    sagaOrder:
+      m.sagaOrder !== undefined && m.sagaOrder !== null
+        ? Number(m.sagaOrder)
+        : undefined,
+  }));
+
+  // 7.1) Agrupar por saga (isSaga + sagaKey) y sueltas
+  const groupsMap = new Map<string, Resolved[]>();
+  const singles: Resolved[] = [];
+
+  for (const item of resolved) {
+    if (item.isSaga && item.sagaKey) {
+      const key = item.sagaKey;
+      if (!groupsMap.has(key)) groupsMap.set(key, []);
+      groupsMap.get(key)!.push(item);
+    } else {
+      singles.push(item);
+    }
+  }
+
+  // 7.2) Orden interno de cada saga por sagaOrder (fallback por título)
+  const sagaBlocks: Resolved[][] = Array.from(groupsMap.values()).map((arr) =>
+    arr.slice().sort((a, b) => {
+      const ao = a.sagaOrder ?? Number.MAX_SAFE_INTEGER;
+      const bo = b.sagaOrder ?? Number.MAX_SAFE_INTEGER;
+      if (ao !== bo) return ao - bo;
+      return a.title.localeCompare(b.title);
+    })
+  );
+
+  // 7.3) Cada suelta es un bloque de 1
+  const blocks: Resolved[][] = [...sagaBlocks, ...singles.map((s) => [s])];
+
+  // 7.4) Barajamos el orden de bloques (no su contenido)
+  shuffleInPlace(blocks);
+
+  /**
+   * 7.5) Interleave (round-robin)
+   * Recorre los bloques en ciclos; en cada ciclo toma 1 elemento de cada bloque (si queda),
+   * así se reparten por el calendario manteniendo el orden interno.
+   * Para darle un punto de aleatoriedad extra, empieza el ciclo en un offset aleatorio.
+   */
+  function interleaveBlocks<T>(blocks: T[][]): T[] {
+    const queues = blocks.map((b) => b.slice()); // copiamos para no mutar
+    const total = queues.reduce((acc, q) => acc + q.length, 0);
+    const out: T[] = [];
+
+    // offset aleatorio de inicio para que el patrón no sea siempre el mismo
+    let start = Math.floor(Math.random() * Math.max(1, queues.length));
+
+    while (out.length < total) {
+      for (let k = 0; k < queues.length; k++) {
+        const i = (start + k) % queues.length;
+        const q = queues[i];
+        if (q.length) {
+          out.push(q.shift()!);
+        }
+      }
+      // cambia el offset en cada vuelta para evitar patrones demasiado regulares
+      start = (start + 1) % Math.max(1, queues.length);
+    }
+    return out;
+  }
+
+  const interleaved = interleaveBlocks(blocks);
+
+  // 7.6) Mapear al calendario
   const rows = days.map((d, i) => ({
     plan_id: plan.id,
-    day_date: d, // <- string 'YYYY-MM-DD' tal cual
-    movie_id: movieIds[i], // <- película i → día i
+    day_date: d,
+    movie_id: interleaved[i].resolvedId,
     status: "locked" as const,
   }));
 

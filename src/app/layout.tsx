@@ -39,7 +39,7 @@ export default function RootLayout({
         </header>
 
         {/* Contenido principal */}
-        <main className="relative z-10 min-h-[calc(100vh-250px)]">
+        <main className="relative z-10 min-h-[calc(100vh-250px)] px-4">
           {children}
         </main>
 

@@ -44,6 +44,7 @@ type Props = {
   days: Day[];
   planId?: string;
   today: string;
+  readOnly?: boolean; // 👈 nuevo
 };
 
 function statusStyles(status: Day["status"]) {
@@ -81,7 +82,7 @@ function statusStyles(status: Day["status"]) {
   }
 }
 
-export default function Calendar({ days, planId, today }: Props) {
+export default function Calendar({ days, planId, today, readOnly }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -219,39 +220,43 @@ export default function Calendar({ days, planId, today }: Props) {
             </div>
 
             <div className="mt-5 flex flex-wrap gap-3">
-              {/* ✅ Optimistic update: VISTO */}
-              <button
-                onClick={() => {
-                  const id = modal.day!.id;
-                  setStatusLocal(id, "watched"); // pinta al instante
-                  setModal({ open: false });
-                  startTransition(async () => {
-                    await setDayStatusAction(id, "watched");
-                    router.refresh(); // sincroniza con server
-                  });
-                }}
-                disabled={isPending}
-                className="rounded-md bg-white px-4 py-2 text-gray-900 disabled:opacity-60"
-              >
-                {isPending ? "Marcando…" : "Marcar visto ✓"}
-              </button>
+              {!readOnly && (
+                <>
+                  {/* VISTO (optimistic) */}
+                  <button
+                    onClick={() => {
+                      const id = modal.day!.id;
+                      setStatusLocal(id, "watched");
+                      setModal({ open: false });
+                      startTransition(async () => {
+                        await setDayStatusAction(id, "watched");
+                        router.refresh();
+                      });
+                    }}
+                    disabled={isPending}
+                    className="rounded-md bg-white px-4 py-2 text-gray-900 disabled:opacity-60"
+                  >
+                    {isPending ? "Marcando…" : "Marcar visto ✓"}
+                  </button>
 
-              {/* ✅ Optimistic update: SALTAR */}
-              <button
-                onClick={() => {
-                  const id = modal.day!.id;
-                  setStatusLocal(id, "skipped"); // pinta al instante
-                  setModal({ open: false });
-                  startTransition(async () => {
-                    await setDayStatusAction(id, "skipped");
-                    router.refresh(); // sincroniza con server
-                  });
-                }}
-                disabled={isPending}
-                className="rounded-md border border-white/15 px-4 py-2 hover:bg-white/5 disabled:opacity-60"
-              >
-                {isPending ? "Saltando…" : "Saltar"}
-              </button>
+                  {/* SALTAR (optimistic) */}
+                  <button
+                    onClick={() => {
+                      const id = modal.day!.id;
+                      setStatusLocal(id, "skipped");
+                      setModal({ open: false });
+                      startTransition(async () => {
+                        await setDayStatusAction(id, "skipped");
+                        router.refresh();
+                      });
+                    }}
+                    disabled={isPending}
+                    className="rounded-md border border-white/15 px-4 py-2 hover:bg-white/5 disabled:opacity-60"
+                  >
+                    {isPending ? "Saltando…" : "Saltar"}
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

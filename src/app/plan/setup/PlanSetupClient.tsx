@@ -68,9 +68,7 @@ export default function PlanSetupClient() {
 
   return (
     <div className="mt-6 space-y-5">
-      <h2 className="text-xl font-semibold text-halloweenAccent">
-        Elige tus días de octubre
-      </h2>
+      <p className="text-xl font-semibold">Elige tus días de octubre</p>
 
       {/* <label className="block text-left">
         <span className="text-sm text-white/80">Nombre del plan</span>

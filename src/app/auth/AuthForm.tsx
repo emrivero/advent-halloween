@@ -22,7 +22,9 @@ export default function AuthForm() {
 
   return (
     <div className="mx-auto max-w-md py-10">
-      <h1 className="mb-4 text-2xl font-semibold">Acceso</h1>
+      <h1 className="mb-4 text-4xl font-semibold text-halloweenAccent">
+        Acceso
+      </h1>
       {!sent ? (
         <form onSubmit={sendMagicLink} className="grid gap-3">
           <input

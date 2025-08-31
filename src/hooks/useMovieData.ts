@@ -16,6 +16,10 @@ export type Movie = {
   tags?: string[];
   isCustom?: boolean;
   year: string;
+  sagaKey?: string;
+  sagaOrder?: number;
+  isSaga?: boolean;
+  sagaInput?: boolean;
 };
 
 export function useMovieData(table: string): {

@@ -54,7 +54,7 @@ export default async function PlanDetailPage({
   return (
     <div className="mx-auto max-w-7xl py-8">
       <header className="flex items-center justify-center">
-        <div className="flex-1">
+        <div className="flex-1 sm:flex-2">
           <h1 className="text-2xl font-semibold text-halloweenAccent ">
             {plan.name ?? "Mi plan"}
           </h1>
