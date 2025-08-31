@@ -3,6 +3,21 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
+  const url = new URL(req.url);
+  const debug = url.searchParams.get("debugDate"); // YYYY-MM-DD
+
+  // if (debug) {
+  //   const res = NextResponse.next();
+  //   // cookie sólo en dev
+  //   if (process.env.NODE_ENV !== "production") {
+  //     res.cookies.set("x-debug-today", debug, { path: "/", httpOnly: false });
+  //   }
+  //   // limpia el query param visualmente
+  //   url.searchParams.delete("debugDate");
+  //   res.headers.set("location", url.toString());
+  //   return NextResponse.redirect(url);
+  // }
+
   let res = NextResponse.next({ request: { headers: req.headers } });
 
   const supabase = createServerClient(

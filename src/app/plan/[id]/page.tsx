@@ -1,4 +1,6 @@
+import RehacerPlanButton from "@/components/ResetButton";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getEffectiveToday } from "@/lib/time";
 import { redirect } from "next/navigation";
 import SharePanel from "./share-panel";
 import Calendar from "./ui-calendar";
@@ -6,18 +8,32 @@ import Calendar from "./ui-calendar";
 export default async function PlanDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const supabase = await createSupabaseServerClient();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/auth");
 
+  // Hoy como 'YYYY-MM-DD' (Europe/Madrid)
+  const today = await getEffectiveToday();
+
+  // (Opcional) actualizar estados en servidor al cargar
+  await supabase
+    .from("plan_days")
+    .update({ status: "unlocked" })
+    .lte("day_date", today)
+    .is("watched_at", null)
+    .eq("status", "locked")
+    .eq("plan_id", id);
+
   const { data: plan } = await supabase
     .from("plans")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
   if (!plan) redirect("/");
 
@@ -29,7 +45,6 @@ export default async function PlanDetailPage({
     .eq("plan_id", plan.id)
     .order("day_date");
 
-  // ¿Existe share_link?
   const { data: share } = await supabase
     .from("share_links")
     .select("token, created_at, expires_at")
@@ -37,15 +52,26 @@ export default async function PlanDetailPage({
     .maybeSingle();
 
   return (
-    <div className="py-6">
-      <h1 className="text-2xl font-semibold">{plan.name ?? "Mi plan"}</h1>
-      <p className="text-white/70 text-sm">
-        {plan.start_date} → {plan.end_date} · {rows?.length ?? 0} días
-      </p>
+    <div className="mx-auto max-w-7xl py-8">
+      <header className="flex items-center justify-center">
+        <div className="flex-1">
+          <h1 className="text-2xl font-semibold text-halloweenAccent ">
+            {plan.name ?? "Mi plan"}
+          </h1>
+          <p className="text-white/70 text-sm">
+            {plan.start_date} → {plan.end_date} · {rows?.length ?? 0} días
+          </p>
+        </div>
+
+        <div>
+          <RehacerPlanButton planId={id} />
+        </div>
+      </header>
 
       <SharePanel planId={plan.id} existingToken={share?.token ?? null} />
 
-      <Calendar days={(rows ?? []) as any} planId={plan.id} />
+      {/* Pasamos 'today' para lógica de desbloqueo del día actual */}
+      <Calendar days={(rows ?? []) as any} planId={plan.id} today={today} />
     </div>
   );
 }

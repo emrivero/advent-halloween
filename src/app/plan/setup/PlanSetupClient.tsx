@@ -11,7 +11,12 @@ import { es } from "date-fns/locale";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-const iso = (d: Date) => d.toISOString().slice(0, 10);
+const iso = (d: Date) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`; // YYYY-MM-DD en hora local
+};
 const mondayIndex = (d: Date) => (getDay(d) + 6) % 7;
 
 export default function PlanSetupClient() {
@@ -44,6 +49,7 @@ export default function PlanSetupClient() {
     setSelected(new Set(daysArr.filter((d) => isWeekend(d)).map(iso)));
   const selectWeekdays = () =>
     setSelected(new Set(daysArr.filter((d) => !isWeekend(d)).map(iso)));
+  const allDays = () => setSelected(new Set(daysArr.map(iso)));
   const clearAll = () => setSelected(new Set());
 
   const selectedSorted = Array.from(selected).sort();
@@ -87,6 +93,12 @@ export default function PlanSetupClient() {
           className="rounded-md border border-white/15 px-3 py-1.5 text-sm hover:bg-white/5"
         >
           Laborables
+        </button>
+        <button
+          onClick={allDays}
+          className="rounded-md border border-[#f0a500] px-3 py-1.5 text-sm hover:bg-white/5"
+        >
+          Monster Mode
         </button>
         <button
           onClick={clearAll}

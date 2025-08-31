@@ -88,11 +88,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Nota legal / footer mini */}
-      <p className="mt-10 text-center text-sm text-white/50">
-        Hecho con Next.js + Supabase · No compartimos datos con terceros
-      </p>
     </div>
   );
 }

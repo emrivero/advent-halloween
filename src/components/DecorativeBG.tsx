@@ -13,7 +13,7 @@ export default function DecorativeBG() {
         src="/img/ghost.svg"
         alt=""
         className="
-          absolute right-6 top-8 h-20 w-auto opacity-30
+          absolute right-6 top-[250px] h-20 w-auto opacity-30
           max-md:right-2 max-md:top-4 max-md:h-14
           animate-float
         "

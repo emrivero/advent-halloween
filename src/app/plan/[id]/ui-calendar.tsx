@@ -1,8 +1,29 @@
+// src/app/plan/[id]/ui-calendar.tsx
 "use client";
 
 import { Check, Lock, Unlock, X } from "lucide-react";
-import { useState } from "react";
-import { setDayStatusAction, unlockTodayAction } from "./actions";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
+import { setDayStatusAction } from "./actions";
+
+function todayYMD(tz = "Europe/Madrid") {
+  const p = new Intl.DateTimeFormat("en-CA", {
+    timeZone: tz,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const y = p.find((x) => x.type === "year")!.value;
+  const m = p.find((x) => x.type === "month")!.value;
+  const d = p.find((x) => x.type === "day")!.value;
+  return `${y}-${m}-${d}`;
+}
+
+function isUnlocked(dayDate: string, status: Day["status"]) {
+  if (status !== "locked") return true;
+  const todayStr = todayYMD("Europe/Madrid"); // <- local, no ISO UTC
+  return dayDate <= todayStr;
+}
 
 type Movie = {
   id: string;
@@ -22,13 +43,8 @@ type Day = {
 type Props = {
   days: Day[];
   planId?: string;
+  today: string;
 };
-
-function isUnlocked(dayDate: string, status: Day["status"]) {
-  if (status !== "locked") return true;
-  const todayStr = new Date().toISOString().slice(0, 10);
-  return dayDate <= todayStr;
-}
 
 function statusStyles(status: Day["status"]) {
   // ring + badge color por estado
@@ -65,7 +81,18 @@ function statusStyles(status: Day["status"]) {
   }
 }
 
-export default function Calendar({ days, planId }: Props) {
+export default function Calendar({ days, planId, today }: Props) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  // 🔹 Optimistic state
+  const [list, setList] = useState<Day[]>(days);
+  useEffect(() => setList(days), [days]);
+
+  const setStatusLocal = (dayId: string, status: Day["status"]) => {
+    setList((prev) => prev.map((d) => (d.id === dayId ? { ...d, status } : d)));
+  };
+
   const [modal, setModal] = useState<{
     open: boolean;
     movie?: Movie;
@@ -85,7 +112,7 @@ export default function Calendar({ days, planId }: Props) {
           max-[400px]:[grid-template-columns:repeat(1,minmax(0,1fr))]
         "
       >
-        {days.map((d) => {
+        {list.map((d) => {
           const unlockedNow = isUnlocked(d.day_date, d.status);
           const { ring, badgeBg, Icon, label } = statusStyles(d.status);
           const clickable = unlockedNow && !!d.movie;
@@ -95,10 +122,10 @@ export default function Calendar({ days, planId }: Props) {
               key={d.id}
               className={[
                 "relative m-8 flex h-[120px] w-[120px] items-center justify-center cursor-pointer rounded-[30%]",
-                "md:h-[140px] md:w-[140px] lg:h-[160px] lg:w-[160px]",
+                "md:h-[140px] md:w-[140px] lg:h-[160px] lg:w-[160px] bg-[url('/img/pumpkin.png')] bg-cover bg-center",
                 // Fondo calabaza cuando se puede abrir
                 clickable
-                  ? "bg-[#f0a500]/65 bg-[url('/img/pumpkin.png')] bg-cover bg-center hover:bg-[#f0a500] hover:mix-blend-multiply transition-colors"
+                  ? "bg-[#f0a500]/65  hover:bg-[#f0a500] hover:mix-blend-multiply transition-colors"
                   : "bg-[#f0a500]/65",
                 ring,
               ].join(" ")}
@@ -109,11 +136,6 @@ export default function Calendar({ days, planId }: Props) {
               title={`${label} · ${d.day_date}`}
               aria-label={`${label} · ${d.day_date}`}
             >
-              {/* Candado grande sólo cuando está bloqueado y aún no toca */}
-              {!unlockedNow && d.status === "locked" && (
-                <span className="lock" aria-hidden="true" />
-              )}
-
               {/* Badge de estado arriba-derecha */}
               <span
                 className={[
@@ -136,7 +158,7 @@ export default function Calendar({ days, planId }: Props) {
                   lg:h-[54px] lg:w-[54px]
                 "
               >
-                {new Date(d.day_date).getDate()}
+                {parseInt(d.day_date.slice(8, 10), 10)}
               </div>
             </button>
           );
@@ -144,7 +166,7 @@ export default function Calendar({ days, planId }: Props) {
       </section>
 
       {/* Leyenda */}
-      <div className="mt-2 flex flex-wrap items-center justify-center gap-3 text-sm text-white/80">
+      <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-sm text-white/80">
         <LegendDot
           color="#835c08"
           icon={<Lock className="h-3.5 w-3.5" />}
@@ -197,36 +219,39 @@ export default function Calendar({ days, planId }: Props) {
             </div>
 
             <div className="mt-5 flex flex-wrap gap-3">
+              {/* ✅ Optimistic update: VISTO */}
               <button
-                onClick={async () => {
-                  await setDayStatusAction(modal.day!.id, "watched");
+                onClick={() => {
+                  const id = modal.day!.id;
+                  setStatusLocal(id, "watched"); // pinta al instante
                   setModal({ open: false });
+                  startTransition(async () => {
+                    await setDayStatusAction(id, "watched");
+                    router.refresh(); // sincroniza con server
+                  });
                 }}
-                className="rounded-md bg-white px-4 py-2 text-gray-900"
+                disabled={isPending}
+                className="rounded-md bg-white px-4 py-2 text-gray-900 disabled:opacity-60"
               >
-                Marcar visto ✓
+                {isPending ? "Marcando…" : "Marcar visto ✓"}
               </button>
+
+              {/* ✅ Optimistic update: SALTAR */}
               <button
-                onClick={async () => {
-                  await setDayStatusAction(modal.day!.id, "skipped");
+                onClick={() => {
+                  const id = modal.day!.id;
+                  setStatusLocal(id, "skipped"); // pinta al instante
                   setModal({ open: false });
+                  startTransition(async () => {
+                    await setDayStatusAction(id, "skipped");
+                    router.refresh(); // sincroniza con server
+                  });
                 }}
-                className="rounded-md border border-white/15 px-4 py-2 hover:bg-white/5"
+                disabled={isPending}
+                className="rounded-md border border-white/15 px-4 py-2 hover:bg-white/5 disabled:opacity-60"
               >
-                Saltar
+                {isPending ? "Saltando…" : "Saltar"}
               </button>
-              {planId && (
-                <button
-                  onClick={async () => {
-                    await unlockTodayAction(planId);
-                    setModal({ open: false });
-                  }}
-                  className="rounded-md border border-white/15 px-4 py-2 hover:bg-white/5"
-                  title="Desbloquear los días hasta hoy"
-                >
-                  Desbloquear hoy
-                </button>
-              )}
             </div>
           </div>
         </div>

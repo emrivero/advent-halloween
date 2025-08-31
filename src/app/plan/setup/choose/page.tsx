@@ -1,13 +1,23 @@
 // src/app/plan/setup/choose/page.tsx
 import ChooseMoviesClient from "./ChooseMoviesClient";
 
-export default function ChoosePage({
+export default async function ChoosePage({
   searchParams,
 }: {
-  searchParams: { name?: string; days?: string };
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const name = searchParams.name ?? "Mi plan";
-  const days = (searchParams.days ?? "").split(",").filter(Boolean);
+  const sp = await searchParams;
+
+  // helper para leer 1er valor si viene como array
+  const pick = (v?: string | string[]) => (Array.isArray(v) ? v[0] : v);
+
+  const name = pick(sp.name) ?? "Mi plan";
+  const daysCsv = pick(sp.days) ?? ""; // <- adiós .toString() a undefined
+  const days = daysCsv
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .sort(); // 'YYYY-MM-DD' ordena perfecto lexicográficamente
 
   if (!days.length) {
     return (

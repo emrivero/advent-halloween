@@ -270,13 +270,14 @@ export default function ChooseMoviesClient({
               setSelected((prev) => [
                 ...prev,
                 {
-                  id: movie.tmdb_id?.toString(), // lo guardas si quieres persistir luego
+                  // NO usar id aquí (id es para UUID interno)
+                  tmdb_id: movie.tmdb_id, // <- externo
+                  imdb_id: movie.imdb ?? null, // <- externo
                   title: movie.title,
                   poster_url: movie.poster_url ?? null,
                   tags: movie.genres ?? [],
-                  isCustom: false, // marcamos que vino por buscador
-                  year: movie.year, // año para mostrar
-                },
+                  isCustom: true,
+                } as any, // si TS protesta hasta que tipemos
               ]);
             }}
           />

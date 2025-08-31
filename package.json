@@ -13,6 +13,7 @@
     "@supabase/supabase-js": "^2.56.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
     "lucide-react": "^0.542.0",
     "moviedb-promise": "^4.0.7",
     "next": "15.5.2",

@@ -33,12 +33,16 @@ export default function RootLayout({
         </header>
 
         {/* Contenido principal */}
-        <main className="relative z-10 min-h-[calc(100vh-200px)]">
+        <main className="relative z-10 min-h-[calc(100vh-250px)]">
           {children}
         </main>
 
         {/* Footer con una calabaza “marca de agua” extra */}
         <footer className="relative z-10 mt-16 border-t border-white/10 z-index[-10] max-h[100px]">
+          {/* Nota legal / footer mini */}
+          <p className="mt-3 text-center text-sm text-white/50">
+            Hecho con Next.js + Supabase · No compartimos datos con terceros
+          </p>
           <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-white/60">
             © {new Date().getFullYear()} — Happy Haunting! 👻
           </div>
