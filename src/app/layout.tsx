@@ -7,8 +7,35 @@ import AuthButtonClient from "@/components/AuthButtonClient";
 import Link from "next/link";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://advent-halloween.vercel.app"),
   title: "Advent Films Halloween",
   description: "Tu maratón de Halloween a tu ritmo",
+  openGraph: {
+    type: "website",
+    url: "/",
+    title: "Advent Films Halloween 🎃",
+    siteName: "Advent Films Halloween",
+    description: "Tu maratón de Halloween a tu ritmo",
+    images: [
+      {
+        url: "/og-halloween.png", // ruta pública
+        width: 1254,
+        height: 608,
+        alt: "Advent Films Halloween - calendario de pelis",
+      },
+    ],
+    locale: "es_ES",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Advent Films Halloween 🎃",
+    description: "Tu maratón de Halloween a tu ritmo",
+    images: ["/og-halloween.png"],
+  },
+  icons: {
+    icon: "/favicon.ico",
+  },
+  themeColor: "#1d1d1d",
 };
 
 export default function RootLayout({
