@@ -51,7 +51,7 @@ export default function MovieSearch({
 
       {/* Dropdown */}
       {open && items.length > 0 && (
-        <ul className="absolute z-20 mt-1 max-h-80 w-full overflow-auto rounded-md border border-white/15 bg-black/90 backdrop-blur">
+        <ul className="absolute z-80 mt-1 max-h-80 w-full overflow-auto rounded-md border border-white/15 bg-black/90 backdrop-blur">
           {items.map((it) => (
             <li
               key={`${it.tmdb_id}-${it.title}`}

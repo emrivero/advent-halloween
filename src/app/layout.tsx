@@ -27,24 +27,26 @@ export default function RootLayout({
       <body className="min-h-dvh bg-[#1d1d1d] text-white">
         {/* Fondo y decoraciones */}
         <DecorativeBG />
-
         {/* Header sencillo */}
         <header className="border-b border-white/10">
-          <nav className="mx-auto flex max-w-5xl items-center justify-between p-4">
-            <Link href="/" className="text-lg font-semibold">
+          <nav
+            className="
+      mx-auto flex max-w-5xl flex-col items-center gap-3 p-4
+      sm:flex-row sm:items-center sm:justify-between sm:gap-0
+    "
+          >
+            <Link href="/" className="text-2xl font-semibold">
               🎃 Advent Films Halloween
             </Link>
             <AuthButtonClient />
           </nav>
         </header>
-
         {/* Contenido principal */}
-        <main className="relative z-10 min-h-[calc(100vh-250px)] px-4">
+        <main className="relative z-30 min-h-[calc(100vh-250px)] px-4">
           {children}
         </main>
-
-        {/* Footer con una calabaza “marca de agua” extra */}
-        <footer className="relative z-10 mt-16 border-t border-white/10 z-index[-10] max-h[100px]">
+        {/* Footer con una calabaza “marca de agua” extra */}+{" "}
+        <footer className="relative z-0 mt-16 border-t border-white/10 max-h[100px] px-4">
           {/* Nota legal / footer mini */}
           <p className="mt-3 text-center text-sm text-white/50">
             Hecho con Next.js + Supabase · No compartimos datos con terceros

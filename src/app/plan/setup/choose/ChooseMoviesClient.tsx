@@ -423,7 +423,7 @@ export default function ChooseMoviesClient({
           })}
         </div>
       ) : (
-        <div className="mt-4">
+        <div className="mt-4 relative z-40">
           <MovieSearch
             maxRemaining={target - selected.length}
             onAdd={(movie) => {
@@ -431,9 +431,8 @@ export default function ChooseMoviesClient({
               setSelected((prev) => [
                 ...prev,
                 {
-                  // NO usar id aquí (id es para UUID interno)
-                  tmdb_id: movie.tmdb_id, // externo
-                  imdb_id: movie.imdb ?? null, // externo
+                  tmdb_id: movie.tmdb_id,
+                  imdb_id: movie.imdb ?? null,
                   title: movie.title,
                   poster_url: movie.poster_url ?? null,
                   tags: movie.genres ?? [],

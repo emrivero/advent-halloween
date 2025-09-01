@@ -79,28 +79,28 @@ export default function PlanSetupClient() {
         />
       </label> */}
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 sm:justify-center">
         <button
           onClick={selectWeekends}
-          className="rounded-md border border-white/15 px-3 py-1.5 text-sm hover:bg-white/5"
+          className="rounded-md border border-white/15 px-2 py-1.5 text-sm hover:bg-white/5"
         >
           Fines de semana
         </button>
         <button
           onClick={selectWeekdays}
-          className="rounded-md border border-white/15 px-3 py-1.5 text-sm hover:bg-white/5"
+          className="rounded-md border border-white/15 px-2 py-1.5 text-sm hover:bg-white/5"
         >
           Laborables
         </button>
         <button
           onClick={allDays}
-          className="rounded-md border border-[#f0a500] px-3 py-1.5 text-sm hover:bg-white/5"
+          className="rounded-md border border-white/15 px-2 py-1.5 text-sm hover:bg-white/5"
         >
           Monster Mode
         </button>
         <button
           onClick={clearAll}
-          className="rounded-md border border-white/15 px-3 py-1.5 text-sm hover:bg-white/5"
+          className="rounded-md border border-white/15 px-2 py-1.5 text-sm hover:bg-white/5"
         >
           Limpiar
         </button>
