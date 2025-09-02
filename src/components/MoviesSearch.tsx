@@ -1,6 +1,7 @@
 "use client";
 
 import { MovieDetail, useMovieSearch } from "@/hooks/useMovieSearch";
+import { useEffect } from "react";
 
 export default function MovieSearch({
   onAdd,
@@ -27,6 +28,12 @@ export default function MovieSearch({
   } = useMovieSearch(300);
 
   const canAdd = !!detail && maxRemaining > 0;
+
+  useEffect(() => {
+    if (!detail) return;
+    document.documentElement.classList.add("overflow-hidden");
+    return () => document.documentElement.classList.remove("overflow-hidden");
+  }, [detail]);
 
   return (
     <div ref={containerRef} className="relative z-index-[100]">
