@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react"; // opcional: pnpm add lucide-react
+import PlanButtonClient from "@/components/PlanButtonClient";
 import Link from "next/link";
 
 export default function HomePage() {
@@ -47,19 +47,7 @@ export default function HomePage() {
               <li>• Guardado en la nube y enlaces compartibles</li>
             </ul>
 
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center bgcolor-[#f0a500]">
-              <Link
-                href="/auth"
-                className="inline-flex items-center justify-center rounded-lg bg-[#f0a500] text-gray-900 px-4 py-2 
-                font-medium hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-white/40"
-              >
-                Crear mi plan
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-              <span className="text-sm text-white/60">
-                Login rápido con MagicLink
-              </span>
-            </div>
+            <PlanButtonClient />
           </div>
         </div>
 

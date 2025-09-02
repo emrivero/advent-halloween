@@ -110,7 +110,7 @@ export default function Calendar({ days, planId, today, readOnly }: Props) {
           max-[992px]:[grid-template-columns:repeat(4,minmax(0,1fr))]
           max-[768px]:[grid-template-columns:repeat(3,minmax(0,1fr))]
           max-[576px]:[grid-template-columns:repeat(2,minmax(0,1fr))]
-          max-[400px]:[grid-template-columns:repeat(1,minmax(0,1fr))]
+          max-[400px]:[grid-template-columns:repeat(2,minmax(0,1fr))]
         "
       >
         {list.map((d) => {

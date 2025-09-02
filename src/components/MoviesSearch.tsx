@@ -80,15 +80,45 @@ export default function MovieSearch({
 
       {/* Modal */}
       {detail && (
-        <div className="modal-backdrop" onClick={closeDetail}>
-          <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="modal-backdrop overflow-y-auto overscroll-contain"
+          onClick={closeDetail}
+        >
+          {/* Lock scroll del body mientras el modal está abierto */}
+          {(() => {
+            // inline effect sin hooks extra: ejecuta una sola vez por render del modal
+            typeof document !== "undefined" &&
+              document.documentElement.classList.add("overflow-hidden");
+            return null;
+          })()}
+          <div
+            className="
+        modal-panel
+        w-[min(900px,95vw)]
+        max-h-[90svh] md:max-h-[85svh]
+        overflow-y-auto
+      "
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Detalle de ${detail.title}`}
+          >
             <div className="flex items-start justify-between">
               <h2 className="text-xl font-semibold">
                 {detail.title} {detail.year ? `(${detail.year})` : ""}
               </h2>
               <button
-                onClick={closeDetail}
+                onClick={() => {
+                  // al cerrar, restauramos el scroll del body
+                  if (typeof document !== "undefined") {
+                    document.documentElement.classList.remove(
+                      "overflow-hidden"
+                    );
+                  }
+                  closeDetail();
+                }}
                 className="text-[#f0a500] text-2xl leading-none"
+                aria-label="Cerrar"
               >
                 &times;
               </button>
@@ -131,7 +161,14 @@ export default function MovieSearch({
 
             <div className="mt-5 flex justify-end gap-2">
               <button
-                onClick={closeDetail}
+                onClick={() => {
+                  if (typeof document !== "undefined") {
+                    document.documentElement.classList.remove(
+                      "overflow-hidden"
+                    );
+                  }
+                  closeDetail();
+                }}
                 className="rounded-md border border-white/15 px-4 py-2 hover:bg-white/5"
               >
                 Cancelar
@@ -141,6 +178,11 @@ export default function MovieSearch({
                 onClick={() => {
                   if (!detail) return;
                   onAdd(detail);
+                  if (typeof document !== "undefined") {
+                    document.documentElement.classList.remove(
+                      "overflow-hidden"
+                    );
+                  }
                   closeDetail();
                 }}
                 className={

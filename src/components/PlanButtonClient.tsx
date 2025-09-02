@@ -1,11 +1,12 @@
 "use client";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function AuthButtonClient() {
+export default function PlanButtonClient() {
   const supabase = createSupabaseBrowserClient();
   const router = useRouter();
   const [email, setEmail] = useState<string | null>(null);
@@ -44,26 +45,30 @@ export default function AuthButtonClient() {
 
   if (email) {
     return (
-      <div className="flex items-center gap-3">
-        <span className="text-white/80 text-sm">
-          Bienvenid@, <strong>{email}</strong>
-        </span>
-        <button
-          onClick={async () => {
-            await supabase.auth.signOut();
-            router.refresh(); // actualiza server components
-          }}
-          className="rounded-md border border-white/15 px-3 py-1 text-sm hover:bg-white/5"
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center bgcolor-[#f0a500]">
+        <Link
+          href="/auth"
+          className="inline-flex items-center justify-center rounded-lg bg-[#f0a500] text-gray-900 px-4 py-2 
+                font-medium hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-white/40"
         >
-          Cerrar sesión
-        </button>
+          Ir a mi plan
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Link>
       </div>
     );
   }
 
   return (
-    <Link href="/auth" className="rounded-md bg-white px-4 py-2 text-gray-900">
-      Entrar
-    </Link>
+    <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center bgcolor-[#f0a500]">
+      <Link
+        href="/auth"
+        className="inline-flex items-center justify-center rounded-lg bg-[#f0a500] text-gray-900 px-4 py-2 
+                font-medium hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-white/40"
+      >
+        Crear mi plan
+        <ArrowRight className="ml-2 h-4 w-4" />
+      </Link>
+      <span className="text-sm text-white/60">Login rápido con MagicLink</span>
+    </div>
   );
 }

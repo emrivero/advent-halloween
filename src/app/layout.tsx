@@ -72,7 +72,7 @@ export default function RootLayout({
         <main className="relative z-30 min-h-[calc(100vh-250px)] px-4">
           {children}
         </main>
-        {/* Footer con una calabaza “marca de agua” extra */}+{" "}
+        {/* Footer con una calabaza “marca de agua” extra */}
         <footer className="relative z-0 mt-16 border-t border-white/10 max-h[100px] px-4">
           {/* Nota legal / footer mini */}
           <p className="mt-3 text-center text-sm text-white/50">
