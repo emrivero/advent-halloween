@@ -156,10 +156,10 @@ export default function Calendar({ days, planId, today, readOnly }: Props) {
                   absolute -bottom-14 flex h-[45px] w-[45px] items-center justify-center rounded-full
                   border-2 border-[#f0a500] bg-black/70 text-white text-sm
                   md:h-[50px] md:w-[50px] md:text-base
-                  lg:h-[54px] lg:w-[54px]
+                  lg:h-[54px] lg:w-[54px] halloween-text
                 "
               >
-                {parseInt(d.day_date.slice(8, 10), 10)}
+                Día {parseInt(d.day_date.slice(8, 10), 10)}
               </div>
             </button>
           );
